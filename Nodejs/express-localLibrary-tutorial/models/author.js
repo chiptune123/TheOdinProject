@@ -22,7 +22,7 @@ AuthorSchema.virtual("getFullName").get(function () {
   return fullname;
 });
 
-//Virtual to return the url of specific author
+//Virtual to return the absolute url of specific author
 AuthorSchema.virtual("getAuthorUrl").get(function () {
   return `/catalog/author/${this._id}`;
 });
