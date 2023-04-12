@@ -10,3 +10,4 @@ router.get("/cool", function (req, res, next) {
   res.send("Ure cool");
 });
 
+module.exports = router;
