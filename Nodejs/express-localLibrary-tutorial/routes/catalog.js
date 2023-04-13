@@ -33,7 +33,34 @@ router.post("/book/:id/update", book_controller.book_update_post);
 // GET request for one book.
 router.get("/book/:id", book_controller.book_detail);
 
-//GET request for list of all Book items.
+// GET request for list of all Book items.
 router.get("/books", book_controller.book_list);
+
+// AUTHOR ROUTES //
+
+// GET request for creating author.
+router.get("/author/create", author_controller.author_delete_get);
+
+// POST request for creating author
+router.post("/author/create", author_controller.author_create_post);
+
+// GET request for delete author.
+router.get("/author/:id/delete", author_controller.author_delete_get);
+
+// POST request for delete author.
+router.post("/author/:id/delete", author_controller.author_delete_post);
+
+// GET request for update author.
+router.get("/author/:id/update", author_controller.author_update_get);
+
+// POST request for update author.
+router.post("/author/:id/update", author_controller.author_update_post);
+
+// GET request for display an author
+router.get("/author/:id", author_controller.author_detail);
+
+// POST request for display list of all authors
+router.get("/authors", author_controller.author_list);
+
 
 
