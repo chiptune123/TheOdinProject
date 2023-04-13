@@ -108,6 +108,14 @@ router.get("/bookinstance/:id/update", book_instance_controller.bookinstance_upd
 // POST request for update a BookInstance.
 router.post("/bookinstance/:id/update", book_instance_controller.bookinstance_update_post);
 
+// GET request to display a BookInstance.
+router.get("/bookinstance/:id", book_instance_controller.bookinstance_detail);
+
+// GET request to display a list of all BookInstance.
+router.get("/bookinstances", book_instance_controller.bookinstance_list);
+
+module.exports = router;
+
 
 
 
