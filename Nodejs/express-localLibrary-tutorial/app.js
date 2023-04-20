@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var engine = require('ejs-mate');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,12 +13,15 @@ var app = express();
 //Set up mongoose connection
 const mongoose = require('mongoose');
 mongoose.set('strictQuery',false); //Allow data pass to model constructor can be outside the schema.
-const mongoDBConnectionString = "mongodb+srv://phamtienphat123:<password>@cluster0.8tuhqls.mongodb.net/?retryWrites=true&w=majority"
+const mongoDBConnectionString = "mongodb+srv://phamtienphat123:@cluster0.8tuhqls.mongodb.net/?retryWrites=true&w=majority"
 
 async function main(){
   await mongoose.connect(mongoDBConnectionString);
 }
 main().catch(err => console.log(err));
+
+// use ejs-mate for all ejs templates:
+app.engine('ejs',engine);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
