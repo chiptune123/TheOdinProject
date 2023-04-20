@@ -1,0 +1,12 @@
+<% layout("layout") -%>
+<h1><%= title %></h1>
+<ul>
+  <% for(let bookinstance in bookinstance_list){ %>
+  <li>
+    <a href="<%= bookinstance_list[bookinstance].GetBookUrl %>"
+      ><%= bookinstance_list[bookinstance].book.title %></a
+    >
+    : <%= bookinstance_list[bookinstance ].imprint %>
+  </li>
+  <% } %>
+</ul>
