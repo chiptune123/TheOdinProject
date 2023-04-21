@@ -20,7 +20,7 @@
       ><%= bookinstance_list[bookinstance].status %>
     </span>
     <%} if(bookinstance_list[bookinstance].status != "Available"){ %>
-    <span> (Due): <%= bookinstance_list[bookinstance].due_back %> </span>
+    <span> (Due): <%= bookinstance_list[bookinstance].due_back_formatted %> </span>
     <% } %>
   </li>
   <% } %>
