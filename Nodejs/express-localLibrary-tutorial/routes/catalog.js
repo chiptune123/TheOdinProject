@@ -59,8 +59,8 @@ router.post("/author/:id/update", author_controller.author_update_post);
 // GET request for display an author
 router.get("/author/:id", author_controller.author_detail);
 
-// POST request for display list of all authors
-router.post("/authors", author_controller.author_list);
+// GET request for display list of all authors
+router.get("/authors", author_controller.author_list);
 
 // GENRE ROUTES //
 
