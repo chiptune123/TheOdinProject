@@ -3,10 +3,25 @@
 <ul>
   <% for(let bookinstance in bookinstance_list){ %>
   <li>
-    <a href="<%= bookinstance_list[bookinstance].GetBookUrl %>"
-      ><%= bookinstance_list[bookinstance].book.title %></a
-    >
+    <a href="<%= bookinstance_list[bookinstance].GetBookUrl %>">
+      <%= bookinstance_list[bookinstance].book.title %>
+    </a>
     : <%= bookinstance_list[bookinstance ].imprint %>
+     <% if(bookinstance_list[bookinstance].status == "Available"){ %>
+    <span class="text-success">
+      <%=bookinstance_list[bookinstance].status %>
+    </span>
+    <% } else if(bookinstance_list[bookinstance].status == "Maintenance"){ %>
+    <span class="text-danger">
+      <%= bookinstance_list[bookinstance].status %>
+    </span>
+    <% } else {%>
+    <span class="text-warning"
+      ><%= bookinstance_list[bookinstance].status %>
+    </span>
+    <%} if(bookinstance_list[bookinstance].status != "Available"){ %>
+    <span> (Due): <%= bookinstance_list[bookinstance].due_back %> </span>
+    <% } %>
   </li>
   <% } %>
 </ul>
