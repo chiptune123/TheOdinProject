@@ -1,0 +1,11 @@
+<% layout("layout") %>
+<h1><%= title %></h1>
+<ul>
+  <% for(genre in genre_list){ %>
+  <li>
+    <a href="<%= genre_list[genre].GetBookUrl %>">
+      <%= genre_list[genre].name %>
+    </a>
+  </li>
+  <% } %>
+</ul>
