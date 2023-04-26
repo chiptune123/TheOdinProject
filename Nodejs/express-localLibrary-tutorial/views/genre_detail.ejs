@@ -1,0 +1,14 @@
+<% layout("layout") %>
+<h1>Genre: <%= genre.name %></h1>
+<div style="margin-left: 20px; margin-top: 20px">
+  <br />
+  <h4>Books</h4>
+  <dl>
+    <% if(Object.keys(genre_books).length === 0){ %>
+    <p>This genre has no associate Books</p>
+    <% } else{ %> <% for(book in genre_books){ %>
+    <dt><a href="<%= genre_books[book].getBookUrl %>"> <%= genre_books[book].title %> </a></dt>
+    <dd><%= genre_books[book].summary %></dd>
+    <% } %> <% } %>
+  </dl>
+</div>
