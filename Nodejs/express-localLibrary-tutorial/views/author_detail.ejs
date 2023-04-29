@@ -1,0 +1,15 @@
+<% layout("layout") %>
+<h1>Author: <%= author.getFullName %> </h1>
+<p> <%= author.date_of_birth %> - <%= author.date_of_death %> </p>
+<div style="margin-left: 20px; margin-top: 20px;">
+  <h4>Books</h4>
+  <dl>
+    <% if(Object.keys(allBooksByAuthor).length == 0){ %>
+      <p>This author has no book </p>
+    <% } else{ %>
+    <% for (book in allBooksByAuthor){ %>
+        <dt> <a href="<%= allBooksByAuthor[book].getBookUrl %>"> <%= allBooksByAuthor[book].title %> </a>  </dt>
+        <dd> <%= allBooksByAuthor[book].summary %> </dd>
+    <% } } %>
+  </dl>
+</div>

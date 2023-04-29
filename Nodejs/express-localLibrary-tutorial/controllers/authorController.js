@@ -1,6 +1,7 @@
 const Author = require("../models/author");
 const asyncHandler = require("express-async-handler");
 //This middleware using to caught exception and passing to express error handler
+const Book = require("../models/book");
 
 //Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
@@ -10,7 +11,23 @@ exports.author_list = asyncHandler(async (req, res, next) => {
 
 //Display detail page for a specific Author
 exports.author_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Author detail: ${req.params.id}`);
+  const [author, allBookByAuthor] = await Promise.all([
+    Author.findById(req.params.id).exec(),
+    Book.find({ author: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (author === null) {
+    //No result
+    const err = new Error("No Author Found!");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("author_detail", {
+    title: "Author Detail",
+    author: author,
+    allBooksByAuthor: allBookByAuthor,
+  });
 });
 
 //Display Author create form on GET.
