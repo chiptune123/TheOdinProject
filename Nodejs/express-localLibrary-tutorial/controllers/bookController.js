@@ -8,6 +8,7 @@ const async = require("async");
 const bookinstance = require("../models/bookinstance");
 const genre = require("../models/genre");
 const { exec } = require("selenium-webdriver/io/exec");
+const { promise } = require("selenium-webdriver");
 
 //Display welcome page
 // exports.index = asyncHandler(async (req, res, next) => {
@@ -75,12 +76,28 @@ exports.book_list = asyncHandler(async (req, res, next) => {
     .sort({ title: 1 })
     .populate("author")
     .exec();
-    res.render("book_list",{title: "Book List", book_list: all_book});
+  res.render("book_list", { title: "Book List", book_list: all_book });
 });
 
 //Display detail page for a specific book
 exports.book_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Book detail: ${req.params.index}`);
+  const [book, bookInstances] = await Promise.all([
+    Book.findById(req.params.id).populate("author").populate("genre").exec(),
+    BookInstance.find({ book: req.params.id }).exec(),
+  ]);
+
+  if (book === null) {
+    //No result
+    const err = new Error("Book not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("book_detail", {
+    title: book.title,
+    book: book,
+    book_instances: bookInstances,
+  });
 });
 
 //Display book create form on GET.
