@@ -12,7 +12,20 @@ exports.bookinstance_list = asyncHandler(async (req, res, next) => {
 
 //Display detail page for specific BookInstance
 exports.bookinstance_detail = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance detail");
+  const bookInstances = await BookInstance.findById(req.params.id)
+    .populate("book")
+    .exec();
+
+  if (bookInstances === null) {
+    let err = new Error("Book Instances Not Found!");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("bookinstance_detail", {
+    title: "Book:",
+    bookinstance: bookInstances,
+  });
 });
 
 //Display BookInstance create form on GET
