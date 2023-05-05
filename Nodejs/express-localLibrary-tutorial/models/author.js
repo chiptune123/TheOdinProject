@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {DateTime} = require("luxon");
+const { DateTime } = require("luxon");
 
 const Schema = mongoose.Schema;
 
@@ -28,21 +28,40 @@ AuthorSchema.virtual("getAuthorUrl").get(function () {
   return `/catalog/author/${this._id}`;
 });
 
-AuthorSchema.virtual("date_of_birth_formatted").get(function(){
-  if(!this.date_of_birth){
+AuthorSchema.virtual("date_of_birth_formatted").get(function () {
+  if (!this.date_of_birth) {
     return "";
   }
-  return DateTime.fromJSDate(this.date_of_birth).toLocaleString(DateTime.DATE_MED);
-})
+  return DateTime.fromJSDate(this.date_of_birth).toLocaleString(
+    DateTime.DATE_MED
+  );
+});
 
-AuthorSchema.virtual("date_of_death_formatted").get(function(){
-  if(!this.date_of_death){
+AuthorSchema.virtual("date_of_death_formatted").get(function () {
+  if (!this.date_of_death) {
     return "";
+  } else {
+    return DateTime.fromJSDate(this.date_of_death).toLocaleString(
+      DateTime.DATE_MED
+    );
   }
-  else{
-    return DateTime.fromJSDate(this.date_of_death).toLocaleString(DateTime.DATE_MED);
+});
+
+AuthorSchema.virtual("lifespan").get(function () {
+  let lifespan = "";
+  if (!this.date_of_birth) {
+    lifespan += "Unknown";
+  } else {
+    lifespan = DateTime.fromJSDate(this.date_of_birth).toLocaleString(DateTime.DATE_MED);
   }
-})
+
+  if(!this.date_of_death){
+    lifespan += " - Present";
+  } else {
+    lifespan += (" - " + DateTime.fromJSDate(this.date_of_death).toLocaleString(DateTime.DATE_MED));
+  }
+  return lifespan;
+});
 
 // Export model
 module.exports = mongoose.model("Author", AuthorSchema);

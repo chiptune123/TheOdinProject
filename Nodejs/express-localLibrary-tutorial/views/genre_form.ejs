@@ -1,0 +1,33 @@
+<% layout("layout") %>
+<h1><%= title %></h1>
+<form method="post" action="">
+  <div class="form-group">
+    <label for="name">Genre:</label>
+    <!--We need to put "typeof genre == "undefined" here because genre object is not define
+        in the GET method. It's only defined with POST method, that why we need to check 
+        whether object is exist to handle error during GET method -->
+    <input
+      class="form-control"
+      id="name"
+      name="name"
+      type="text"
+      placeholder="Fantasy, Poetry etc."
+      required = "true"
+      value=<% if(typeof genre == "undefined"){  %> 
+          ""
+      <% } else { %>
+          <%= genre.name %>
+      <% } %>
+    >
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </div>
+</form>
+
+<% if(typeof errors != "undefined"){ %>
+    <ul>
+      <% for(let error in errors){ %>
+          <li><%= errors[error].msg %></li>
+      <% } %>
+    </ul>
+<% } %>
+
