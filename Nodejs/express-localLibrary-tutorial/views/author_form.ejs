@@ -1,0 +1,68 @@
+<% layout("layout") %>
+<h1><%= title %></h1>
+<form method="post" action="">
+  <div class="form-group">
+    <label for="first_name">First Name:</label>
+    <input
+      class="form-control"
+      id="first_name"
+      type="text"
+      name="first_name"
+      placeholder="First name"
+      required="true"
+      value=
+      <% if (typeof author == "undefined") { %>
+          ""
+      <% } else { %>
+          <%= author.first_name %>
+      <% } %>
+    >
+    <label for="family_name">Family Name:</label>
+    <input 
+      class="form-control" 
+      id="family_name" 
+      type="text"
+      name="family_name"
+      placeholder="Family name"
+      required="true" 
+      value=<% if (typeof author == "undefined") { %>
+        ""
+    <% } else { %>
+        <%= author.family_name  %>
+    <% } %>
+    >
+  </div>
+  <div class="form-group">
+    <label for="date_of_birth">Date of birth:</label>
+    <input 
+      class="form-control"
+      type="date"
+      name="date_of_birth"
+      value=<% if (typeof author == "undefined") { %>
+       ""
+      <% } else{ %>
+           <%= author.date_of_birth %>
+      <% }%>  
+      />
+      <label for="date_of_death">Date of death:</label>
+      <input
+      class="form-control"
+      type="date"
+      name="date_of_death"
+      value=<% if (typeof author == "undefined") { %>
+        ""
+      <% } else { %>
+          <%= author.date_of_death %>
+      <% } %>
+      />
+      <button class="btn btn-primary" type="submit">Submit</button>
+  </div>
+  <% if(typeof errors != "undefined"){ %>
+      <ul>
+        <% for(let error in errors) { %>
+            <li><%= errors[error].msg %> </li>
+        <% } %>
+      </ul>
+  <% } %>
+ 
+</form>
