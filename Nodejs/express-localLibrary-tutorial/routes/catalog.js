@@ -39,7 +39,7 @@ router.get("/books", book_controller.book_list);
 // AUTHOR ROUTES //
 
 // GET request for creating author.
-router.get("/author/create", author_controller.author_delete_get);
+router.get("/author/create", author_controller.author_create_get);
 
 // POST request for creating author
 router.post("/author/create", author_controller.author_create_post);
