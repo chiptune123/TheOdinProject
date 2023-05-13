@@ -1,0 +1,124 @@
+<% layout("layout") %>
+<h1><%= title %></h1>
+<form method="post" action="">
+  <div class="form-group">
+    <label for="title">Title:</label>
+    <input
+      class="form-control"
+      id="title"
+      type="text"
+      placeholder="Name of book"
+      name="title"
+      required
+      value=<% if (typeof book === "undefined") { %>
+          ""
+      <% } else { %>
+        <%= book.title %>
+      <% } %>
+    >
+  </div>
+  <div class="form-group">
+    <label for="author">Author:</label>
+    <select 
+      class="form-control" 
+      id="author" 
+      type="select" 
+      placeholder="Select author"
+      name="author"
+      required="true"
+    >
+    <!-- Sort the author family name to put it in the option tag -->
+    
+    <% authors.sort(function(a, b){
+      let textA = a.family_name.toUpperCase();
+      let textB = b.family_name.toUpperCase();
+      if(textA < textB){
+        return -1;
+      }
+      if(textA > textB){
+      }
+      return 0;
+    }) %> 
+    
+
+    <!-- Create a dropdown menu options for select tag
+         * First we get all the authors using the for loop
+         * Second we check if there are any "author" validate or sanitize data through book object, 
+         * if the data exist then we check if the author id in book object equal any allAuthors id.
+         * if they have the same id we will put "selected" attribute to pre-select that option
+         * when the web page is load -->
+    <% for(let author in authors) { %>
+        <% if(typeof book !== "undefined") { %>
+            <option 
+              value="<%= authors[author]._id %>"
+              <% if(authors[author]._id.toString() === book.author._id.toString()){ %>
+                  selected
+              <% } %>
+              >
+              <%= authors[author].getFullName %>
+            </option>
+        <% } else { %>
+            <option value="<%= authors[author]._id %>"><%= authors[author].getFullName %></option>
+        <% } %>
+    <% } %>
+    
+    </select> 
+  </div>
+  <div class="form-group">
+    <label for="summary">Summary:</label>
+    <textarea 
+      class="form-control" 
+      id="summary" 
+      type="textarea"
+      placeholder="Summary"
+      name="summary"
+      >
+      <% if(typeof book !== "undefined") { %>
+          <%= book.summary %>
+      <% } %>
+    </textarea>
+  </div>
+  <div class="form-group">
+    <label for="isbn">ISBN:</label>
+    <input 
+      class="form-control" 
+      id="isbn" 
+      type="text" 
+      placeholder="ISBN13" 
+      name="isbn"
+      value=<% if(typeof book === "undefined") { %>
+          ""
+      <% } else { %>
+          <%= book.isbn %>
+      <% }%>
+      >
+  </div>
+  <div class="form-group">
+    <label>Genre:</label>
+    <div>
+    <% for(let genre in genres){ %>
+        <div style="display: inline; padding-right: 10px;">
+          <input 
+            class="checkbox-input" 
+            type="checkbox" 
+            name="genre" 
+            id="<%= genres[genre]._id %>"  
+            value="<%= genres[genre]._id %>"
+            <% if (genres[genre].checked == true) { %>
+              checked
+            <% } %>
+          >
+          <label for="<%= genres[genre]._id %>"><%= genres[genre].name %></label>
+        </div>
+    <% } %>
+    </div>  
+  </div>
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+<% if(typeof errors != "undefined"){ %>
+    <ul>
+      <% for(let error in errors){ %>
+          <li><%= errors[error].msg %></li>
+      <% } %>
+    </ul>
+<% } %>
