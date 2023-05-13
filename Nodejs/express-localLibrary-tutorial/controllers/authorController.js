@@ -87,6 +87,7 @@ exports.author_create_post = [
       await author.save();
       res.redirect(author.getAuthorUrl);
     }
+
   }),
 ];
 
