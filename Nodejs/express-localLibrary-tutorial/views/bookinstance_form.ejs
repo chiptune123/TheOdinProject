@@ -1,0 +1,99 @@
+<% layout('layout') %>
+
+<h1><%= title %></h1>
+
+
+<form method="POST" action="">
+  <div class="form-group">
+    <label for="book"> Book: </label>
+    <select
+      class="form-control"
+      id="book"
+      type="select"
+      placeholder="Select book"
+      name="book"
+      require="true"
+    >
+    <!-- Sort the title of the book_list follow the alphabet -->
+      <% book_list.sort(function(a, b){
+        let textA = a.title.toUpperCase();
+        let textB = b.title.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      }); %>
+      <%  for(let book in book_list){ %>
+          <option 
+            value="<%= book_list[book]._id %>"
+            <% if (typeof bookinstance != "undefined") { %>
+              
+                <% if (book_list[book]._id.toString() == selected_book_ID.toString()) { %>
+                  selected
+                <% } %>
+            <% } %>
+          >
+          <!-- We need to use method toString() to convert the object to string type
+          because JavaScript compare two objects base on reference, not their value -->
+          <%= book_list[book].title %>
+          </option>
+      <% } %>
+      
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="imprint">Imprint:</label>
+    <input 
+      class="form-control" 
+      id="imprint" 
+      name="imprint"
+      type="text"
+      placeholder="Publisher and date information"
+      
+      value="<% if(typeof bookinstance !== "undefined") { %>
+          <%= bookinstance.imprint %>
+      <% } %>"
+      
+      
+      >
+  </div>
+  <div class="form-group">
+    <label for="due_back">
+      Date when book available:
+    </label>
+    <input
+      class="form-control"
+      id="due_back"
+      name="due_back"
+      type="date"
+      <% if (typeof bookinstance ==="undefined") { %>
+          value = ""
+      <% } else { %>
+          value="<%= bookinstance.due_back %>"
+      <% } %>
+    >
+  </div>
+  <div class="form-group">
+    <label for="status">
+      Status:
+    </label>
+    <select
+      class="form-control" 
+      id="status" 
+      type="select"
+      placeholder="Select status"
+      name="status"
+      require="true"
+    >
+      <option value="Maintenance">Maintenance</option>
+      <option value="Available">Available</option>
+      <option value="Loaned">Loaned</option>
+      <option value="Reserved">Reserved</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<% if(typeof errors != "undefined") { %>
+    <ul>
+      <% for(let error in errors) { %>
+          <li><%= errors[error].msg %></li>
+      <% } %>
+    </ul>
+<% } %>
