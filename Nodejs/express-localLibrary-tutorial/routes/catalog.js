@@ -94,7 +94,7 @@ router.get("/genres", genre_controller.genre_list);
 router.get("/bookinstance/create", book_instance_controller.bookinstance_create_get);
 
 // POST request for create a BookInstance.
-router.post("bookinstance/create", book_instance_controller.bookinstance_create_post);
+router.post("/bookinstance/create", book_instance_controller.bookinstance_create_post);
 
 // GET request for delete a BookInstance.
 router.get("/bookinstance/:id/delete", book_instance_controller.bookinstance_delete_get);
