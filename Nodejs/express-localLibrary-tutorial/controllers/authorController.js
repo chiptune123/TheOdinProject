@@ -67,12 +67,12 @@ exports.author_create_post = [
     // Create author object with escaped and trimmed date from the form
     const author = new Author({
       first_name: req.body.first_name,
-      family_name: req.body.family_name,  
+      family_name: req.body.family_name,
       date_of_birth: req.body.date_of_birth,
       date_of_death: req.body.date_of_death,
     });
 
-    if(!errors.isEmpty()){
+    if (!errors.isEmpty()) {
       // If there are errors, render the form again with sanitized data and error messages.
       res.render("author_form", {
         title: "Create Author",
@@ -87,18 +87,53 @@ exports.author_create_post = [
       await author.save();
       res.redirect(author.getAuthorUrl);
     }
-
   }),
 ];
 
 //Display author delete form on GET.
 exports.author_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author delete GET");
+  // Get detail of author and all their book
+  const [author, allBooksByAuthor] = await Promise.all([
+    Author.findById(req.params.id).exec(),
+    Book.find({ author: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (author === null) {
+    // If by any case the author is not exist in database or user press the back button but
+    // the author has been deleted already, We will guide the users back to authors list page.
+    res.redirect("/catalog/authors");
+  }
+
+  // Render author_delete.ejs form with specific author and their book data.
+  res.render("author_delete", {
+    title: "Author Delete",
+    author: author,
+    author_books: allBooksByAuthor,
+  });
 });
 
 //Handle Author delete on POST.
 exports.author_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author delete POST");
+  const [author, allBooksByAuthor] = await Promise.all([
+    Author.findById(req.params.id).exec(),
+    Book.find({ author: req.params.id }, "title summary").exec(),
+  ]);
+
+  // We check again in POST method. If the author has any books associate with then
+  // we render the author_delete.ejs form again.
+  if (allBookByAuthor.length > 0) {
+    res.render("author_delete", {
+      title: "Author Delete",
+      author: author,
+      author_books: allBooksByAuthor,
+    });
+  } else {
+    // If the author has no associate book then we proceed to delete the author
+    // and redirect to author list page
+    // authorid is the object in the HTTP POST request body in the form insde author_delete.ejs
+    await Author.findByIdAndRemove(req.body.authorid);
+    res.redirect("/catalog/author");
+  }
 });
 
 //Display Author update form on GET.
