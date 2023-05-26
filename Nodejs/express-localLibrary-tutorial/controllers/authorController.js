@@ -121,7 +121,7 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
 
   // We check again in POST method. If the author has any books associate with then
   // we render the author_delete.ejs form again.
-  if (allBookByAuthor.length > 0) {
+  if (allBooksByAuthor.length > 0) {
     res.render("author_delete", {
       title: "Author Delete",
       author: author,
@@ -132,7 +132,7 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
     // and redirect to author list page
     // authorid is the object in the HTTP POST request body in the form insde author_delete.ejs
     await Author.findByIdAndRemove(req.body.authorid);
-    res.redirect("/catalog/author");
+    res.redirect("/catalog/authors");
   }
 });
 
