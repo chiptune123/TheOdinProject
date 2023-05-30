@@ -140,7 +140,10 @@ exports.book_create_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("isbn", "ISBN must not be empty and only 13 numbers").trim().isLength({ min: 1, max: 13 }).escape(),
+  body("isbn", "ISBN must not be empty and only 13 numbers")
+    .trim()
+    .isLength({ min: 1, max: 13 })
+    .escape(),
   body("genre.*").escape(),
 
   // Process request after validation and sanitization
@@ -166,13 +169,12 @@ exports.book_create_post = [
         Genre.find().exec(),
       ]);
 
-
       // Mark our selected genres as checked.
       // We check whether book.genre array, which is the information the user input in,
-      // contain any _id field value of allGenre object. If it contain, We mark the 
+      // contain any _id field value of allGenre object. If it contain, We mark the
       // property "checked = true" for every genre element in allGenres object.
-      for(let genre in allGenres) {
-        if (book.genre.includes(allGenres[genre]._id)){
+      for (let genre in allGenres) {
+        if (book.genre.includes(allGenres[genre]._id)) {
           allGenres[genre].checked = true;
         }
       }
@@ -184,7 +186,8 @@ exports.book_create_post = [
         book: book,
         errors: errors.array(),
       });
-    } else { // If the data form is valid then save the data
+    } else {
+      // If the data form is valid then save the data
       await book.save();
       res.redirect(book.getBookUrl);
     }
@@ -203,7 +206,32 @@ exports.book_delete_post = asyncHandler(async (req, res, next) => {
 
 //Display book update form on GET.
 exports.book_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book update GET");
+  const [book, allAuthors, allGenres] = await Promise.all([
+    Book.findById(req.params.id).populate("author").populate("genre").exec(),
+    Author.find().exec(),
+    Genre.find().exec(),
+  ]);
+
+  if (book === null) {
+    const err = new Error("Book not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  for (const genre of allGenres) {
+    for (const book_genres of book.genre) {
+      if (genre._id.toString() === book_genres._id.toString()) {
+        genre.checked = "true";
+      }
+    }
+  }
+
+  res.render("book_form", {
+    title: "Update Book",
+    authors: allAuthors,
+    genres: allGenres,
+    book: book,
+  });
 });
 
 //Display book update form on POST.
