@@ -13,7 +13,7 @@
       value=<% if (typeof book === "undefined") { %>
           ""
       <% } else { %>
-        <%= book.title %>
+          "<%= book.title %>"
       <% } %>
     >
   </div>
@@ -115,6 +115,7 @@
   </div>
   <button class="btn btn-primary" type="submit">Submit</button>
 </form>
+
 <% if(typeof errors != "undefined"){ %>
     <ul>
       <% for(let error in errors){ %>
