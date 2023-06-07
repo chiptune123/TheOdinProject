@@ -145,6 +145,7 @@ exports.book_create_post = [
     .isLength({ min: 1, max: 13 })
     .escape(),
   body("genre.*").escape(),
+  // We use a wildcard(*) to sanitize each of genre array entries.
 
   // Process request after validation and sanitization
   asyncHandler(async (req, res, next) => {
@@ -235,6 +236,79 @@ exports.book_update_get = asyncHandler(async (req, res, next) => {
 });
 
 //Display book update form on POST.
-exports.book_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Book create POST");
-});
+exports.book_update_post = [
+  // Convert the genre to an array
+  (req, res, next) => {
+    if (!(req.body.genre instanceof Array)) {
+      if (typeof req.body.genre === "undefined") {
+        req.body.genre = [];
+      } else {
+        req.body.genre = new Array(req.body.genre);
+      }
+    }
+    next();
+  },
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("author", "Author must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("Summary", "Summary must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("isbn", "ISBN must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("genre.*").escape(),
+  //Using the wildcard to sanitize every entries in genre array
+
+  //Process request after validation and sanitization
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request
+    const errors = validationResult(req);
+
+    // Create a book object with trimmed/escaped data and old id.
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genre,
+      _id: req.params.id,
+      // We need to specify the old ID or new ID will be assigned!
+    });
+
+    if (!errors.isEmpty()) {
+      // If errors exist. Render form again with sanitized value and errors messages.
+
+      // Get all author and genres data for form
+      const [allAuthors, allGenres] = await Promise.all([
+        Author.find().exec(),
+        Genre.find().exec(),
+      ]);
+
+      // Mark our selected genre as checked.
+      for (const genre of allGenres) {
+        if (book.genre.includes(genre)) {
+          genre.checked = "true";
+        }
+      }
+
+      res.render("book_form", {
+        title: "Update Book",
+        authors: allAuthors,
+        genres: allGenres,
+        book: book,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // If the data form is valid then update the record
+      const thebook = await Book.findByIdAndUpdate(req.params.id, book, {});
+      //Redirect to book detail page.
+      res.redirect(thebook.getBookUrl);
+    }
+  }),
+];
