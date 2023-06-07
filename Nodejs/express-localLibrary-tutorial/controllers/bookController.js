@@ -256,7 +256,7 @@ exports.book_update_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("Summary", "Summary must not be empty.")
+  body("summary", "Summary must not be empty.")
     .trim()
     .isLength({ min: 1 })
     .escape(),
