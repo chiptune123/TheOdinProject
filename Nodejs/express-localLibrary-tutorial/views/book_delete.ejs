@@ -1,0 +1,38 @@
+<% layout("layout") %>
+<h1> <a href="<%= Book.getBookUrl %>"><%= Book.title %></a> </h1>
+<% if (AllBookInstancesByBook.length > 0) { %>
+    <p>
+      <strong>
+        Delete the following Book Instances before attempting to delete this Book
+      </strong>
+    </p>
+    <div style="margin-left: 20px; margin: top 20px;">
+      <h4>Book Instances</h4>
+      <% for(let BookInstances in AllBookInstancesByBook) { %>
+          <hr>
+          <p><strong>Status:</strong> <%= AllBookInstancesByBook[BookInstances].status %></p>
+          <p><strong>Imprint:</strong> <%= AllBookInstancesByBook[BookInstances].imprint %></p>
+          <p><strong>Due Back:</strong> <%= AllBookInstancesByBook[BookInstances].due_back %></p>
+          <p><strong>Id: </strong>
+            <a href="<%= AllBookInstancesByBook[BookInstances].GetBookInstanceUrl %>">
+              <%= AllBookInstancesByBook[BookInstances]._id %>
+            </a>
+          </p>
+      <% } %>
+          <hr>
+    </div>
+<% } else { %>
+    <p>Do you really want to delete this book?</p>
+    <form method="post" action="">
+      <div class="form-group">
+        <input
+          class="form-control"
+          id="bookid"
+          name="bookid"
+          value="<%= Book._id %>"
+          type="hidden"
+        >
+      </div>
+      <button class="btn btn-primary" type="submit">Delete</button>
+    </form>
+<% } %>
