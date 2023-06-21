@@ -216,6 +216,26 @@ exports.book_delete_get = asyncHandler(async (req, res, next) => {
 
 //Display book delete form on POST.
 exports.book_delete_post = asyncHandler(async (req, res, next) => {
+  const [book, AllBookInstancesByBook] = await Promise.all([
+    Book.findById(req.params.id).exec(),
+    BookInstance.find({ book: req.params.id }).exec(),
+  ]);
+
+  // We check again to make sure there are no book instances connect with the book
+  // If any book instances exist then render back to book_delete.ejs with book data
+  // and all book instances connect with that book
+  if(AllBookInstancesByBook.length > 0){
+    res.render("book_delete", {
+      title: "Author Delete Page",
+      Book: book,
+      AllBookInstancesByBook: AllBookInstancesByBook,
+    })
+  } else {
+    // After remove the book, guide user to the book_list.ejs 
+    await Book.findByIdAndRemove(req.body.bookid);
+    res.redirect("/catalog/books");
+  }
+
 
 });
 
