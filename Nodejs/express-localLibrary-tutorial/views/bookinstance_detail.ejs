@@ -19,4 +19,11 @@
 <% if(bookinstance.status != "Available"){ %>
     <p><strong>Due back:</strong> <%= bookinstance.due_back_formatted %></p>
 <% } %>
+<hr>
+<p>
+  <a href="<%= bookinstance.id %>/delete">Delete book instance</a>
+</p>
+<p>
+  <a href="<%= bookinstance.id %>/update">Update book instance</a>
+</p>
 

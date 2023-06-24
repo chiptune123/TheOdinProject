@@ -1,0 +1,32 @@
+<% layout("layout") %>
+
+<% if (bookInstance == null) { %>
+    <p><strong>This book instance is not exist</strong></p>
+    <a href="/catalog/">Go Back</a>
+<% } else { %>
+    <h1>
+      <strong>Do you want to delete this book instance?</strong>
+    </h1>
+    <hr>
+    <p>
+       <strong>Id: <a href="<%= bookInstance.GetBookInstanceUrl %>"><%= bookInstance.id %></a></strong> 
+    </p>
+    <p><strong>Title:</strong> <%= bookInstance.book.title %></p>
+    <p><strong>Imprint:</strong><%= bookInstance.imprint %></p>
+    <p><strong>Status:</strong> <%= bookInstance.status %></p>
+    <p><strong>Due back:</strong> <%= bookInstance.due_back %></p>
+    
+    <p></p>
+    <form method="post" action="">
+      <div class="form-group">
+        <input 
+        class="form-control"
+        id="bookInstanceId"
+        name="bookInstanceId"
+        type="hidden"
+        value="<%= bookInstance._id %>"
+        >
+      </div>
+      <button class="btn btn-primary" type="submit">Delete</button>
+    </form>
+<% } %>
