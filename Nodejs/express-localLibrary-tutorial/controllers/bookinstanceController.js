@@ -1,7 +1,8 @@
 const BookInstance = require("../models/bookinstance");
 const asyncHandler = require("express-async-handler");
 const Book = require("../models/book");
-const {body, validationResult} = require("express-validator");
+const { body, validationResult } = require("express-validator");
+const book = require("../models/book");
 
 //Display list of all BookInstances.
 exports.bookinstance_list = asyncHandler(async (req, res, next) => {
@@ -25,7 +26,7 @@ exports.bookinstance_detail = asyncHandler(async (req, res, next) => {
   }
 
   res.render("bookinstance_detail", {
-    title: "Book:",
+    title: "Book Instance detail",
     bookinstance: bookInstances,
   });
 });
@@ -57,14 +58,14 @@ exports.bookinstance_create_post = [
     const errors = validationResult(req);
 
     // Create a bookinstance object with validation and sanitize data
-    const bookinstance = new BookInstance({ 
+    const bookinstance = new BookInstance({
       book: req.body.book,
       imprint: req.body.imprint,
       status: req.body.status,
-      due_back: req.body.due_back 
+      due_back: req.body.due_back,
     });
-    
-    if(!errors.isEmpty()){
+
+    if (!errors.isEmpty()) {
       // If there are errors
       // Render form again with sanitizer data and error messages.
       const allBooks = await Book.find({}, "title").exec();
@@ -89,7 +90,18 @@ exports.bookinstance_create_post = [
 
 //Display BookInstance delete form on GET
 exports.bookinstance_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance delete GET");
+  const bookInstance = await BookInstance.findById(req.params.id)
+    .populate("book")
+    .exec();
+  // In case the bookInstance is not exist, Guide user back to
+  if (bookInstance == null) {
+    res.redirect("/catalog/bookinstances");
+  }
+
+  res.render("bookinstance_delete", {
+    title: "Book instance delete",
+    bookInstance: bookInstance,
+  });
 });
 
 //Handle BookInstance delete on POST
