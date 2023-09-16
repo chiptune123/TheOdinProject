@@ -1,0 +1,35 @@
+<% layout("layout") %>
+<h1>Genre: <%= Genre.name %></h1>
+<% if(Genre_books.length > 0) { %>
+    <strong>
+      <p>Delete or update the following books before attempting to delete this genre</p>
+    </strong>
+    <div style="margin-left: 20px; margin-top: 20px;">
+      <h4>Books</h4>
+      <dl>
+        <% for(let book in Genre_books){ %>
+            <dt>
+              <a href="<%= Genre_books[book].getBookUrl %>">
+              <%= Genre_books[book].title %>
+              </a>
+            </dt>
+            <dd> <%= Genre_books[book].summary %> </dd>
+        <% } %>
+      </dl>
+    </div>
+<% } else { %>
+    <strong>
+      <p>Do you want to delete this Genre?</p>
+    </strong>
+    <form method="post" action="">
+      <div class="form-group">
+        <input 
+          class="form-control"
+          id="genreId"
+          name="genreId"
+          require="true"
+          value="<%= Genre.id %>">
+      </div>
+      <button class="btn btn-primary">Delete</button>
+    </form>
+<% } %>
