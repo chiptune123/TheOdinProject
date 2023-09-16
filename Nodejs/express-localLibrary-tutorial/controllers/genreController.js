@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Book = require("../models/book");
 const { error } = require("selenium-webdriver");
 const { body, validationResult } = require("express-validator");
+const genre = require("../models/genre");
 
 //Display list of all Genre.
 exports.genre_list = asyncHandler(async (req, res, next) => {
@@ -97,7 +98,25 @@ exports.genre_delete_get = asyncHandler(async (req, res, next) => {
 
 //Handle delete Genre on POST.
 exports.genre_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre delete POST");
+  const [genre, AllBooksByGenre] = await Promise.all([
+    Genre.findById(req.params.id).exec(),
+    Book.find({genre: req.params.id}, "title summary").exec()
+  ]);
+  
+  // Check again on POST method to make sure genre doesn't have any associate book
+  // If associate books is existed, render the genre_delete.ejs again with the data
+  // of associate books
+  if(AllBooksByGenre.length > 0){
+    res.render("genre_delete", {
+      title: "Genre Delete",
+      Genre: genre,
+      Genre_books: AllBooksByGenre
+    }) 
+  } else {
+    // Delete the Genre if it has no associate books and redirect to genre_list.ejs page
+    await Genre.findByIdAndRemove(req.params.id);
+    res.redirect("/catalog/genres");
+  }
 });
 
 //Display update Genre form on GET.
