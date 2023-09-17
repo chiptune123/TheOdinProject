@@ -1,5 +1,27 @@
 <% layout("layout") %>
 <h1><%= title %></h1>
+<% if (genre_books.length > 0) { %>
+    <strong> 
+      <p>The genre of these following books will be changed also: </p>
+    </strong> 
+
+    <div style="margin-left: 20px; margin-top: 20px">
+      <h4>Books</h4>
+      <dl>
+        <% for(let book in genre_books){ %>
+            <dt>
+              <a href="<%= genre_books[book].getBookUrl %>"><%= genre_books[book].title %></a>
+            </dt>
+            <dd><%= genre_books[book].summary %></dd>
+        <% } %>
+      </dl>
+    </div>
+<% } %>
+<% if (title == "Update Genre") { %>
+    <strong>
+       <p>Current Genre: <%= genre.name %></p>
+    </strong>
+<% } %>
 <form method="post" action="">
   <div class="form-group">
     <label for="name">Genre:</label>
@@ -9,19 +31,25 @@
     <input
       class="form-control"
       id="name"
-      name="name"
+      name="GenreName"
       type="text"
       placeholder="Fantasy, Poetry etc."
       required = "true"
       value=<% if(typeof genre == "undefined"){  %> 
           ""
       <% } else { %>
-          <%= genre.name %>
+          "<%= genre.name %>"
       <% } %>
     >
     <button class="btn btn-primary" type="submit">Submit</button>
   </div>
 </form>
+
+<% if (typeof DuplicateError != "undefined") { %>
+  <ul>
+    <li><%= DuplicateError %></li>
+  </ul>
+<% } %>
 
 <% if(typeof errors != "undefined"){ %>
     <ul>

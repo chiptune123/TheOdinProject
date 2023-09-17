@@ -64,8 +64,8 @@ exports.genre_create_post = [
     } else {
       // Data form is valid.
       // Check if Genre with the same name exist.
-      const genreExists = await Genre.findOne({name: req.body.name}).exec();
-      if(genreExists) {
+      const genreExists = await Genre.findOne({ name: req.body.name }).exec();
+      if (genreExists) {
         //Genre exist , redirect its to detail page.
         res.redirect(genreExists.GetGenreUrl);
       } else {
@@ -81,10 +81,10 @@ exports.genre_create_post = [
 exports.genre_delete_get = asyncHandler(async (req, res, next) => {
   const [genre, AllBooksByGenre] = await Promise.all([
     Genre.findById(req.params.id).exec(),
-    Book.find({ genre: req.params.id}, "title summary").exec()
-  ])
+    Book.find({ genre: req.params.id }, "title summary").exec(),
+  ]);
 
-  if(genre === null){
+  if (genre === null) {
     //If genre is not found then return the user to genre_list page
     res.redirect("/catalog/genres");
   }
@@ -92,26 +92,26 @@ exports.genre_delete_get = asyncHandler(async (req, res, next) => {
   res.render("genre_delete", {
     title: "Genre Delete",
     Genre: genre,
-    Genre_books: AllBooksByGenre
-  })
+    genre_book: AllBooksByGenre,
+  });
 });
 
 //Handle delete Genre on POST.
 exports.genre_delete_post = asyncHandler(async (req, res, next) => {
   const [genre, AllBooksByGenre] = await Promise.all([
     Genre.findById(req.params.id).exec(),
-    Book.find({genre: req.params.id}, "title summary").exec()
+    Book.find({ genre: req.params.id }, "title summary").exec(),
   ]);
-  
+
   // Check again on POST method to make sure genre doesn't have any associate book
   // If associate books is existed, render the genre_delete.ejs again with the data
   // of associate books
-  if(AllBooksByGenre.length > 0){
+  if (AllBooksByGenre.length > 0) {
     res.render("genre_delete", {
       title: "Genre Delete",
       Genre: genre,
-      Genre_books: AllBooksByGenre
-    }) 
+      Genre_books: AllBooksByGenre,
+    });
   } else {
     // Delete the Genre if it has no associate books and redirect to genre_list.ejs page
     await Genre.findByIdAndRemove(req.params.id);
@@ -121,10 +121,76 @@ exports.genre_delete_post = asyncHandler(async (req, res, next) => {
 
 //Display update Genre form on GET.
 exports.genre_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre update GET");
+  const [genre, AllBooksByGenre] = await Promise.all([
+    Genre.findById(req.params.id).exec(),
+    Book.find({ genre: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (genre === null) {
+    const err = new Error("Genre Not Found!");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("genre_form", {
+    title: "Update Genre",
+    genre: genre,
+    genre_books: AllBooksByGenre,
+  });
 });
 
 //Handle update Genre on POST
-exports.genre_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Genre update POST");
-});
+exports.genre_update_post = [
+  body("GenreName", "Genre name need more than 1 character and must not empty")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  asyncHandler(async (req, res, next) => {
+    //Extract the validation errors fromm the request
+    const errors = validationResult(req);
+
+    const NewGenre = new Genre({
+      name: req.body.GenreName,
+      _id: req.params.id,
+    });
+
+    //Check if NewGenre is equal with any genre that already exist, if true, return error
+    const [genre, AllBooksByGenre, AllGenres] = await Promise.all([
+      Genre.findById(req.params.id).exec(),
+      Book.find({ genre: req.params.id }, "title summary").exec(),
+      Genre.find().exec(),
+    ]);
+
+    //Check the new genre name with every genre to prevent duplicated genre
+    for (let eachGenre in AllGenres) {
+      const check = AllGenres[eachGenre].name;
+      if (AllGenres[eachGenre].name == NewGenre.name) {
+        const DuplicateError = new Error("Genre is already exist!");
+        res.render("genre_form", {
+          title: "Update Genre",
+          genre: genre,
+          genre_books: AllBooksByGenre,
+          DuplicateError: DuplicateError,
+        });
+        return;
+      }
+    }
+
+    if (!errors.isEmpty()) {
+      // If errors exist. Render form again with sanitized value and errors messages.
+
+      res.render("genre_form", {
+        title: "Update Genre",
+        genre: genre,
+        genre_books: AllBooksByGenre,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      //If the data form is corrected and no errors, update the record with the new genre data
+      //and redirect to the URL of the new genre
+      const theGenre = await Genre.findByIdAndUpdate(req.params.id, NewGenre, {});
+      res.redirect(theGenre.GetGenreUrl);
+    }
+  }),
+];
