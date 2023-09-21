@@ -121,10 +121,61 @@ exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
 
 //Display BookInstance update form on GET
 exports.bookinstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update GET");
+  const bookInstance_detail = await BookInstance.findById(req.params.id)
+    .populate("book")
+    .exec();
+
+  res.render("bookinstance_update", {
+    title: "Book Instance Update",
+    bookInstance_detail: bookInstance_detail,
+  });
 });
 
 //Handle BookInstance update on POST
-exports.bookinstance_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update POST");
-});
+exports.bookinstance_update_post = [
+  body("imprint", "Imprint must be specified with at least 10 characters")
+    .trim()
+    .isLength({ min: 10 })
+    .escape(),
+  body("status").escape(),
+  body("due_back", "Invalid date")
+    .optional({ values: "falsy" })
+    .isISO8601()
+    .toDate(),
+  asyncHandler(async (req, res, next) => {
+    //Extract the validation errors in the request
+    const errors = validationResult(req);
+    //Create a new bookInstance object with the data from HTML form. If errors happen, return user
+    //input data.
+    //If no errors, update the document with new bookInstance data
+    let a = req.body.book;
+    
+    const newBookInstance = await new BookInstance({
+      book: req.body.book,
+      imprint: req.body.imprint,
+      status: req.body.status,
+      due_back: req.body.due_back,
+      _id: req.params.id
+      //Need to update with old id or new ID will assign to this book instance
+    }).populate("book");
+
+    if (!errors.isEmpty()) {
+      
+      //If there are errors, render form again with errors message and user input data
+      res.render("bookinstance_update", {
+        title: "Book Instance Update",
+        bookInstance_detail: newBookInstance,
+        errors: errors.array()
+      });
+      return;
+    } else {
+      //If the data which the user input are valid, update the document in the collection
+      const theBookInstance = await BookInstance.findByIdAndUpdate(
+        req.params.id,
+        newBookInstance,
+        {}
+      );
+      res.redirect(theBookInstance.GetBookInstanceUrl);
+    }
+  }),
+];

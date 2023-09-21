@@ -1,0 +1,69 @@
+<%= layout("layout") %>
+
+<h1><%= title %></h1>
+<strong>
+  <p>Current Book: <%= bookInstance_detail.book.title %></p>
+<form method="POST" action="">
+  <div class="form-group">
+    <input
+      class="form-control"
+      id="book"
+      name="book"
+      type="hidden"
+      value="<%= bookInstance_detail.book._id%>"
+    />
+  </div>
+  <div class="form-group">
+    <label for="imprint">Current Imprint:</label>
+    <input
+      class="form-control"
+      id="imprint"
+      name="imprint"
+      type="text"
+      placeholder="Publisher and date information"
+      value="<%= bookInstance_detail.imprint %>"
+    />
+  </div>
+  <div class="form-group">
+    <label for="due_back">Current Date when book available: </label>
+    <input
+      class="form-control"
+      id="due_back"
+      name="due_back"
+      type="date"
+      value="<%= bookInstance_detail.due_back_HTMLDate_formatted %>"
+    />
+  </div>
+  <div class="form-group">
+    <label for="status">Current Status: </label>
+    <select
+      class="form-control"
+      id="status"
+      name="status"
+      type="status"
+      placeholder="Select status"
+      required="true"
+    >
+      <option <% if (bookInstance_detail.status == "Maintenance") { %>
+          selected 
+      <% } %> value="Maintenance">Maintenance</option>
+      <option <% if (bookInstance_detail.status == "Available") { %>
+          selected
+      <% } %> value="Available">Available</option>
+      <option <% if (bookInstance_detail.status == "Loaned") { %>
+          selected
+      <% } %> value="Loaned">Loaned</option>
+      <option <% if (bookInstance_detail.status == "Reserved") { %>
+          selected
+      <% } %> value="Reserved">Reserved</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<% if (typeof errors != "undefined") { %>
+    <ul>
+      <% for(let error in errors){ %>
+          <li><%= errors[error].msg %></li>
+      <% } %>
+    </ul>
+<% } %>
