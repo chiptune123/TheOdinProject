@@ -302,7 +302,7 @@ exports.book_update_post = [
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request
     const errors = validationResult(req);
-
+    
     // Create a book object with trimmed/escaped data and old id.
     const book = new Book({
       title: req.body.title,
