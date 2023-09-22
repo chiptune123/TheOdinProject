@@ -41,7 +41,7 @@
       value=<% if (typeof author == "undefined") { %>
        ""
       <% } else{ %>
-           <%= author.date_of_birth %>
+           <%= author.date_of_birth_HTMLDate_Formatted %>
       <% }%>  
       />
       <label for="date_of_death">Date of death:</label>
@@ -52,17 +52,19 @@
       value=<% if (typeof author == "undefined") { %>
         ""
       <% } else { %>
-          <%= author.date_of_death %>
+          <%= author.date_of_death_HTMLDate_Formatted %>
       <% } %>
       />
       <button class="btn btn-primary" type="submit">Submit</button>
   </div>
-  <% if(typeof errors != "undefined"){ %>
-      <ul>
-        <% for(let error in errors) { %>
-            <li><%= errors[error].msg %> </li>
-        <% } %>
-      </ul>
-  <% } %>
- 
 </form>
+<% if(typeof errors != "undefined"){ %>
+    <ul>
+      <% for(let error in errors) { %>
+          <li><%= errors[error].msg %> </li>
+      <% } %>
+    </ul>
+<% } %>
+
+
+

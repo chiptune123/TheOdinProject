@@ -138,7 +138,17 @@ exports.author_delete_post = asyncHandler(async (req, res, next) => {
 
 //Display Author update form on GET.
 exports.author_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author update GET");
+  const author = await Author.findById(req.params.id).exec();
+
+  //In case author is not found in the database, guide the user back to author list page
+  if(author === null){
+    res.redirect("/catalog/authors");
+  }
+
+  res.render("author_form",{
+    title: "Author Update",
+    author: author,
+  })
 });
 
 //Handle author update on POST.
