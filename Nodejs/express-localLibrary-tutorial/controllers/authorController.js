@@ -188,9 +188,6 @@ exports.author_update_post = [
       date_of_death: req.body.date_of_death,
       _id: req.params.id  //Specify the old ID or the new ID will be assigned
     })
-///////////////////
-    console.log(newAuthor);
-//////////////////
     
     if(!errors.isEmpty()){
       res.render("author_form",{
