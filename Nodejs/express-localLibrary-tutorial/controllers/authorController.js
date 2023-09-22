@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 //This middleware using to caught exception and passing to express error handler
 const Book = require("../models/book");
 const { body, validationResult } = require("express-validator");
+const author = require("../models/author");
 
 //Display list of all Authors.
 exports.author_list = asyncHandler(async (req, res, next) => {
@@ -141,17 +142,66 @@ exports.author_update_get = asyncHandler(async (req, res, next) => {
   const author = await Author.findById(req.params.id).exec();
 
   //In case author is not found in the database, guide the user back to author list page
-  if(author === null){
+  if (author === null) {
     res.redirect("/catalog/authors");
   }
 
-  res.render("author_form",{
+  res.render("author_form", {
     title: "Author Update",
     author: author,
-  })
+  });
 });
 
 //Handle author update on POST.
-exports.author_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Author delete post");
-});
+exports.author_update_post = [
+  body("first_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("First name must be specified")
+    .isAlphanumeric()
+    .withMessage("First Name has non-alphanumeric characters."),
+  body("family_name")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Family name must be specified")
+    .isAlphanumeric()
+    .withMessage("Family name has non-alphanumeric characters"),
+  body("date_of_birth", "Invalid date of birth")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
+  body("date_of_death", "Invalid date of death")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .toDate(),
+  asyncHandler(async (req, res, next) => {
+    //Extract error from express validator
+    const errors = validationResult(req);
+    
+
+    let newAuthor = new Author({
+      first_name: req.body.first_name,
+      family_name: req.body.family_name,
+      date_of_birth: req.body.date_of_birth,
+      date_of_death: req.body.date_of_death,
+      _id: req.params.id  //Specify the old ID or the new ID will be assigned
+    })
+///////////////////
+    console.log(newAuthor);
+//////////////////
+    
+    if(!errors.isEmpty()){
+      res.render("author_form",{
+        title: "Author Update",
+        author: newAuthor,
+        errors: errors.array(),
+      })
+      return;
+    } else {
+        const theAuthor = await Author.findByIdAndUpdate(req.params.id, newAuthor, {});
+        res.redirect(theAuthor.getAuthorUrl);
+    }
+  }),
+];
