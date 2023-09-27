@@ -33,9 +33,11 @@ exports.genre_detail = asyncHandler(async (req, res, next) => {
 
 //Display create Genre form on GET. | We don't need asyncHandler here because no code can throw exception.
 
-exports.genre_create_get = (req, res, next) => {
-  res.render("genre_form", { title: "Create Genre" });
-};
+exports.genre_create_get = asyncHandler(async (req, res, next) => {
+  let genre_books = {};
+  genre_books.length = 0;
+  res.render("genre_form", { title: "Create Genre", genre_books: genre_books });
+});
 
 //Handle create Genre on POST
 exports.genre_create_post = [
@@ -189,7 +191,11 @@ exports.genre_update_post = [
     } else {
       //If the data form is corrected and no errors, update the record with the new genre data
       //and redirect to the URL of the new genre
-      const theGenre = await Genre.findByIdAndUpdate(req.params.id, NewGenre, {});
+      const theGenre = await Genre.findByIdAndUpdate(
+        req.params.id,
+        NewGenre,
+        {}
+      );
       res.redirect(theGenre.GetGenreUrl);
     }
   }),
