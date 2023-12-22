@@ -9,7 +9,7 @@ const bcrypt = require("bcryptjs");
 require("dotenv").config();
 
 
-
+//MongoDB connection
 const mongoDBConnectionString = process.env.MongoDBConnectionString;
 mongoose.connect(mongoDBConnectionString);
 const db = mongoose.connection;
